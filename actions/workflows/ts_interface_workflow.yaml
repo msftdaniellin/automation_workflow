@@ -1,0 +1,72 @@
+version: 1.0
+description: a basic interface troubleshooting workflow
+
+input:
+  - interface_name
+
+vars:
+  - result_data: null
+
+tasks:
+  start_workflow:
+    action: core.echo message="starting workflow to troubleshoot interface <% ctx().interface_name %> issue."
+    next:
+      - do: get_interface_state
+
+  get_interface_state:
+    action: network_workflows.common_python_task
+    input:
+      task: 'device.show_interface_brief'
+      extra_args: [<% ctx().interface_name %>]
+    next:
+      - when: <% succeeded() and task().result.result.state = 'down' %>
+        do: get_interface_optic_detail
+      - when: <% succeeded() and task().result.result.state = 'up' %> 
+        do: workflow_completed
+      - when: <% failed() %>
+        do: fail
+
+  get_interface_optic_detail:
+    action: network_workflows.common_python_task
+    input:
+      task: 'device.get_interface_optic_detail'
+      extra_args: [<% ctx().interface_name %>]
+    next:
+      - when: <% succeeded() %>
+        do: get_approval_to_flap_interface
+
+  get_approval_to_flap_interface:
+    action: core.ask
+    input:
+      schema:
+        type: object
+        properties:
+          approval:
+            type: string
+            enum:
+              - approved
+              - rejected
+            required: True
+            description: "Approve or reject to flap interface?"
+    next:
+      - when: <% task(get_approval_to_flap_interface).result.response.approval = approved %>
+        do: flap_interface
+      - when: <% task(get_approval_to_flap_interface).result.response.approval = rejected %>
+        do: workflow_rejected
+
+  flap_interface:
+    action: network_workflows.common_python_task
+    input:
+      task: 'device.flap_interface'
+      extra_args: [<% ctx().interface_name %>]
+    next:
+      - when: <% succeeded() %>
+        do: workflow_completed
+      - when: <% failed() %>
+        do: fail
+
+  workflow_completed:
+    action: core.echo message="Workflow completed troubleshoot interface <% ctx().interface_name %>, it's already up."
+
+  workflow_rejected:
+    action: core.echo message="Workflow completed with user rejected to flap interface <% ctx().interface_name %>."

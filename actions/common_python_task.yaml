@@ -1,0 +1,19 @@
+---
+name: common_python_task
+runner_type: python-script
+description: run python common task.
+enabled: true
+entry_point: python/common_python_task.py
+parameters:
+  task:
+    type: string
+    description: python task path.
+    required: true
+  extra_args:
+    type: array
+    description: python task position args
+    required: false
+  extra_kwargs:
+    type: object
+    description: python task kwargs
+    required: false

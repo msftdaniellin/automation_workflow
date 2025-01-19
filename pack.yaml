@@ -1,0 +1,13 @@
+---
+ref: network_workflows
+name : network_workflows
+description : HRT datacenter network automation workflows.
+keywords:
+  - workflow
+version: 1.0.0
+dependencies:
+  - core
+author : daniel lin.
+email : daniellin139@gmail.com
+python_versions:
+  - "3"

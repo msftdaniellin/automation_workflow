@@ -1,0 +1,11 @@
+---
+  name: "ts_interface_workflow"
+  runner_type: "orquesta"
+  description: "A basic workflow to troubleshoot interface"
+  enabled: true
+  entry_point: "workflows/ts_interface_workflow.yaml"
+  parameters:
+    interface_name:
+      type: "string"
+      required: true
+      description: "interface name"
