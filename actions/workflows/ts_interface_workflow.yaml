@@ -69,13 +69,13 @@ tasks:
   check_interface_optic_light_level:
     action: network_workflows.common_python_task
     input:
-      task: 'device.get_interface_optic_detail'
+      task: 'device.check_interface_optic_light_level'
       extra_args: [<% ctx().device_name %>, <% ctx().interface_name %>]
     next:
       - when: <% succeeded() and task().result.result.state = 'good' %>
         do: get_interface_state
       - when: <% succeeded() and task().result.result.state = 'bad' %>
-        do: get_approval_to_flap_interface
+        do: clean_up_the_fiber
 
   clean_up_the_fiber:
     action: core.echo message="Please clean up the <% ctx().device_name %> interface <% ctx().interface_name %> fiber."
