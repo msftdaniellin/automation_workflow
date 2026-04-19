@@ -5,6 +5,10 @@
   enabled: true
   entry_point: "workflows/ts_interface_workflow.yaml"
   parameters:
+    device_name:
+      type: "string"
+      required: true
+      description: "device name"
     interface_name:
       type: "string"
       required: true

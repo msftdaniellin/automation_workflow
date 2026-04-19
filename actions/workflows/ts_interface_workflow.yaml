@@ -2,6 +2,7 @@ version: 1.0
 description: a basic interface troubleshooting workflow
 
 input:
+  - device_name
   - interface_name
 
 vars:
@@ -17,7 +18,7 @@ tasks:
     action: network_workflows.common_python_task
     input:
       task: 'device.show_interface_brief'
-      extra_args: [<% ctx().interface_name %>]
+      extra_args: [<% ctx().device_name %>, <% ctx().interface_name %>]
     next:
       - when: <% succeeded() and task().result.result.state = 'down' %>
         do: get_interface_optic_detail
@@ -30,7 +31,7 @@ tasks:
     action: network_workflows.common_python_task
     input:
       task: 'device.get_interface_optic_detail'
-      extra_args: [<% ctx().interface_name %>]
+      extra_args: [<% ctx().device_name %>, <% ctx().interface_name %>]
     next:
       - when: <% succeeded() %>
         do: get_approval_to_flap_interface
@@ -58,12 +59,44 @@ tasks:
     action: network_workflows.common_python_task
     input:
       task: 'device.flap_interface'
-      extra_args: [<% ctx().interface_name %>]
+      extra_args: [<% ctx().device_name %>, <% ctx().interface_name %>]
     next:
       - when: <% succeeded() %>
-        do: workflow_completed
+        do: check_interface_optic_light_level
       - when: <% failed() %>
         do: fail
+
+  check_interface_optic_light_level:
+    action: network_workflows.common_python_task
+    input:
+      task: 'device.get_interface_optic_detail'
+      extra_args: [<% ctx().device_name %>, <% ctx().interface_name %>]
+    next:
+      - when: <% succeeded() and task().result.result.state = 'good' %>
+        do: get_interface_state
+      - when: <% succeeded() and task().result.result.state = 'bad' %>
+        do: get_approval_to_flap_interface
+
+  clean_up_the_fiber:
+    action: core.echo message="Please clean up the <% ctx().device_name %> interface <% ctx().interface_name %> fiber."
+    next:
+      - do: confirm_clean_up_the_fiber
+
+  confirm_clean_up_the_fiber:
+    action: core.ask
+    input:
+      schema:
+        type: object
+        properties:
+          approval:
+            type: string
+            enum:
+              - cleaned_up
+            required: True
+            description: "confirm whether cleaned up the fiber?"
+    next:
+      - when: <% task(confirm_clean_up_the_fiber).result.response.approval = cleaned_up %>
+        do: check_interface_optic_light_level
 
   workflow_completed:
     action: core.echo message="Workflow completed troubleshoot interface <% ctx().interface_name %>, it's already up."

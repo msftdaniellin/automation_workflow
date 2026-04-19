@@ -1,7 +1,7 @@
 ---
 ref: network_workflows
 name : network_workflows
-description : HRT datacenter network automation workflows.
+description : Datacenter network automation workflows.
 keywords:
   - workflow
 version: 1.0.0
