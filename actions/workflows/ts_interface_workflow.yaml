@@ -21,20 +21,11 @@ tasks:
       extra_args: [<% ctx().device_name %>, <% ctx().interface_name %>]
     next:
       - when: <% succeeded() and task().result.result.state = 'down' %>
-        do: get_interface_optic_detail
+        do: get_approval_to_flap_interface
       - when: <% succeeded() and task().result.result.state = 'up' %> 
         do: workflow_completed
       - when: <% failed() %>
         do: fail
-
-  get_interface_optic_detail:
-    action: network_workflows.common_python_task
-    input:
-      task: 'device.get_interface_optic_detail'
-      extra_args: [<% ctx().device_name %>, <% ctx().interface_name %>]
-    next:
-      - when: <% succeeded() %>
-        do: get_approval_to_flap_interface
 
   get_approval_to_flap_interface:
     action: core.ask
