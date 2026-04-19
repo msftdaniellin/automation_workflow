@@ -1,0 +1,15 @@
+---
+  name: "eos_upgrade_workflow"
+  runner_type: "orquesta"
+  description: "A basic workflow to upgrade eos image"
+  enabled: true
+  entry_point: "workflows/eos_upgrade_workflow.yaml"
+  parameters:
+    device_name:
+      type: "string"
+      required: true
+      description: "device name"
+    interface_name:
+      type: "string"
+      required: true
+      description: "target_eos_version"
