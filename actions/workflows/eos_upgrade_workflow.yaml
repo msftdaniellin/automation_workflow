@@ -96,16 +96,16 @@ tasks:
             required: True
             description: "confirm device whether booted up?"
     next:
-      - when: <% result().response.device_status = deivce_is_up %>
+      - when: <% succeeded() and result().response.device_status = "deivce_is_up" %>
         do: collect_snapshot_and_compare_previous_snapshot
-      - when: <% result().response.device_status = deivce_is_booting_up %>
+      - when: <% succeeded() and result().response.device_status = "deivce_is_booting_up" %>
         do: confirm_if_device_booted_up
 
   collect_snapshot_and_compare_previous_snapshot:
     action: network_workflows.common_python_task
     input:
       task: 'device.collect_snapshot_and_compare_previous_snapshot'
-      extra_args: [<% ctx().device_name %>, previous_snapshot]
+      extra_args: [<% ctx().device_name %>, ctx().previous_snapshot]
     next:
       - when: <% succeeded() %>
         do: get_traffic_undrain_config_and_apply
