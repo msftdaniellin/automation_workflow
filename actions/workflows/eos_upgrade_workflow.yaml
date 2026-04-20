@@ -105,7 +105,7 @@ tasks:
     action: network_workflows.common_python_task
     input:
       task: 'device.collect_snapshot_and_compare_previous_snapshot'
-      extra_args: [<% ctx().device_name %>, ctx().previous_snapshot]
+      extra_args: [<% ctx().device_name %>, <% ctx().previous_snapshot %>]
     next:
       - when: <% succeeded() %>
         do: get_traffic_undrain_config_and_apply
