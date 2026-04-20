@@ -6,7 +6,7 @@ input:
   - target_eos_version
 
 vars:
-  - result_data: null
+  - previous_snapshot: null
 
 tasks:
   start_workflow:
@@ -32,6 +32,8 @@ tasks:
       extra_args: [<% ctx().device_name %>,]
     next:
       - when: <% succeeded() %>
+        publish:
+          previous_snapshot: task().result.result.snapshot
         do: get_traffic_drain_config_and_apply
       - when: <% failed() %>
         do: workflow_failed
