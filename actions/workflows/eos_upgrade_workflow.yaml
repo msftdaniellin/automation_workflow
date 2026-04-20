@@ -92,13 +92,13 @@ tasks:
             type: string
             enum:
               - deivce_is_up
-              - deivce_si_booting_up
+              - deivce_is_booting_up
             required: True
             description: "confirm device whether booted up?"
     next:
-      - when: <% task(confirm_if_device_booted_up).result.response.device_status = deivce_is_up %>
+      - when: <% result().response.device_status = deivce_is_up %>
         do: collect_snapshot_and_compare_previous_snapshot
-      - when: <% task(confirm_if_device_booted_up).result.response.device_status = deivce_si_booting_up %>
+      - when: <% result().response.device_status = deivce_is_booting_up %>
         do: confirm_if_device_booted_up
 
   collect_snapshot_and_compare_previous_snapshot:
