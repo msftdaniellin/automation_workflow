@@ -9,7 +9,7 @@
       type: "string"
       required: true
       description: "device name"
-    interface_name:
+    target_eos_version:
       type: "string"
       required: true
       description: "target_eos_version"
