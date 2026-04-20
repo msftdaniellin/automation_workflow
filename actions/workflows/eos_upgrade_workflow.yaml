@@ -33,7 +33,7 @@ tasks:
     next:
       - when: <% succeeded() %>
         publish:
-          previous_snapshot: task().result.result.snapshot
+          - previous_snapshot: <% result().output.snapshot %>
         do: get_traffic_drain_config_and_apply
       - when: <% failed() %>
         do: workflow_failed
