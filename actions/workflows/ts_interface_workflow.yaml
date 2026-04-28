@@ -44,6 +44,8 @@ tasks:
             description: "Approve or reject to flap interface?"
     next:
       - when: <% task(get_approval_to_flap_interface).result.response.approval = approved %>
+        publish: 
+          -retry=2
         do: flap_interface
       - when: <% task(get_approval_to_flap_interface).result.response.approval = rejected %>
         do: workflow_rejected
@@ -89,7 +91,6 @@ tasks:
             description: "confirm whether cleaned up the fiber?"
     next:
       - when: <% task(confirm_clean_up_the_fiber).result.response.approval = cleaned_up %>
-        publish: retry=<% ctx(retries) %>
         do: check_interface_optic_light_level
 
   workflow_completed:
