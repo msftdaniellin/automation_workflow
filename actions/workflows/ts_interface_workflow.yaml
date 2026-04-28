@@ -88,8 +88,7 @@ tasks:
             description: "confirm whether cleaned up the fiber?"
     next:
       - when: <% task(confirm_clean_up_the_fiber).result.response.approval = cleaned_up %>
-        publish:
-          - retry: 1
+        publish: retry=1
         do: check_interface_optic_light_level
 
   workflow_completed:
