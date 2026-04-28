@@ -7,6 +7,7 @@ input:
 
 vars:
   - result_data: null
+  - retry: 0
 
 tasks:
   start_workflow:
@@ -18,7 +19,7 @@ tasks:
     action: network_workflows.common_python_task
     input:
       task: 'device.show_interface_brief'
-      extra_args: [<% ctx().device_name %>, <% ctx().interface_name %>]
+      extra_args: [<% ctx().device_name %>, <% ctx().interface_name %>, <% ctx().retry %>]
     next:
       - when: <% succeeded() and task().result.result.state = 'down' %>
         do: get_approval_to_flap_interface
@@ -87,6 +88,8 @@ tasks:
             description: "confirm whether cleaned up the fiber?"
     next:
       - when: <% task(confirm_clean_up_the_fiber).result.response.approval = cleaned_up %>
+        publish:
+          - retry: 1
         do: check_interface_optic_light_level
 
   workflow_completed:
