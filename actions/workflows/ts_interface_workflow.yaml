@@ -44,8 +44,6 @@ tasks:
             description: "Approve or reject to flap interface?"
     next:
       - when: <% task(get_approval_to_flap_interface).result.response.approval = approved %>
-        publish: 
-          -retry=2
         do: flap_interface
       - when: <% task(get_approval_to_flap_interface).result.response.approval = rejected %>
         do: workflow_rejected
@@ -76,6 +74,8 @@ tasks:
     action: core.echo message="Please clean up the <% ctx().device_name %> interface <% ctx().interface_name %> fiber."
     next:
       - do: confirm_clean_up_the_fiber
+        publish: 
+          -retry=2
 
   confirm_clean_up_the_fiber:
     action: core.ask
