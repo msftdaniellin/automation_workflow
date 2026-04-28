@@ -8,6 +8,7 @@ input:
 vars:
   - result_data: null
   - retry: 0
+  - retries: 10
 
 tasks:
   start_workflow:
@@ -88,7 +89,7 @@ tasks:
             description: "confirm whether cleaned up the fiber?"
     next:
       - when: <% task(confirm_clean_up_the_fiber).result.response.approval = cleaned_up %>
-        publish: retry=<% ctx().retry + 1 %>
+        publish: retry=<% ctx(retries) %>
         do: check_interface_optic_light_level
 
   workflow_completed:
